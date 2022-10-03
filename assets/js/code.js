@@ -16,13 +16,14 @@ map.locate({
 })
 
 // Locationfound while be fired multiple times while moving
+
+// !locationfound: user can move and scale map
+// As soon as locationfound: the map is reset to current position due to setView and watch being true
 map.on('locationfound', (e) => {
 
-    var radius = e.accuracy
-
     console.log('found');
+    // If user is not currently changing the mapstate
     L.marker(e.latlng).addTo(map)
-
 
 });
 
