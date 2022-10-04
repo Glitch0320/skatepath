@@ -23,20 +23,22 @@ var first = true
 // As soon as locationfound: the map is reset to current position due to setView and watch being true
 map.on('locationfound', (e) => {
 
+    const points = []
+
     console.log('found')
     if (first) {
-        console.log(e)
+        console.log(L)
+        const point = e.latlng
+        var radius = e.accuracy
+        L.marker(point).addTo(map).bindPopup('Your location is within ' + radius + ' meters from this marker.')
+        L.circle(point, radius).addTo(map)
         first = false
     }
-    // If user is not currently changing the mapstate
     const point = e.latlng
-    // console.log(point)
-    // Every few points, replace those few points with a line, then replace current line with current line + new line
-    collection.push(point)
-    console.log(point)
-    L.marker(point).addTo(map)
-    if (collection.length === 3) {
-        console.log(collection)
+    if (points.length < 3) {
+        points.push(point)
+    } else {
+        L.polyline(points, {color: 'blue'}).addTo(map)
     }
 
 });
