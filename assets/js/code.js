@@ -17,18 +17,27 @@ map.locate({
 
 // Locationfound while be fired multiple times while moving
 const collection = []
+var first = true
 
 // !locationfound: user can move and scale map
 // As soon as locationfound: the map is reset to current position due to setView and watch being true
 map.on('locationfound', (e) => {
 
     console.log('found')
+    if (first) {
+        console.log(e)
+        first = false
+    }
     // If user is not currently changing the mapstate
     const point = e.latlng
     // console.log(point)
-    // If point is 
+    // Every few points, replace those few points with a line, then replace current line with current line + new line
     collection.push(point)
+    console.log(point)
     L.marker(point).addTo(map)
+    if (collection.length === 3) {
+        console.log(collection)
+    }
 
 });
 
