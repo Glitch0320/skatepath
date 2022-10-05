@@ -4,7 +4,7 @@ var map = L.map('map').setView([0, 0], 10);
 const path = []
 
 const pathOptions = {color: '#234099',
-                     weight: 20}
+                     weight: 5}
 
 //  Thanks for this function: https://www.geeksforgeeks.org/program-distance-two-points-earth/#:~:text=For%20this%20divide%20the%20values,is%20the%20radius%20of%20Earth.
 // JavaScript program to calculate Distance Between
