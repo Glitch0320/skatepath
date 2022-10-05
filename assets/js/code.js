@@ -27,7 +27,7 @@ map.on('locationfound', (e) => {
     console.log(e.latlng)
     path.push(e.latlng)
     // Clear polygon layer
-    console.log($('.leaflet-overlay-pane').children().eq(0).children().eq(0))
+    $('.leaflet-overlay-pane').children().eq(0).children().eq(0).empty()
     L.polygon(path).addTo(map)
     // Because locationfound will be fired almost constantly while moving, I could add each new point to a geoJSON object so that a line could be created out of all of the points.
     // At this point, I'm not sure how many points one object could keep track of without causing performance issues, since I've seen geoJSON objects representing lines as complex as state borders, I will assume for now that one skate will not be too much data
