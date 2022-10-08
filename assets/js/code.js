@@ -62,38 +62,31 @@ let pathIndex = 0
 
 map.on('locationfound', (e) => {
 
-    // If current latlng is first, add [lon, lat], timestamp, and accuracy to LineString
-        // Add marker to current user location
-    // Else If first latlng exists, and this latlng is at least previousAccuracy meters from previousLatLng
-        // add [lon, lat], timestamp, and accuracy to LineString
-        // update polyline drawn with LineString
+    console.log('found')
 
-    // console.log(e)
-    // thisPoint = e.latLng
-    // now = e.timestamp
-    // length = path.features[0].geometry.coordinates.length
-    // // If there is at least one element in path...coordinates
-    // if (length > 0) {
-    //     lastPoint = coordsToLatLng(path.features[0].geometry.coordinates[length - 1])
-    //     lastAccur = path.features[0].properties.accuraccies[length - 1]
-    //     console.log(`${lastPoint}
-    //     ${lastAccur}
-    //     ${now}
-    //     ____`)
-    // }
+    // If first location 
+    if (pathIndex === 0) {
+        // Add [lon, lat], timestamp, and accuracy to corresponding arrays in path{geoJSON} object
+        path.features[0].geometry.coordinates = [[10.752245, 59.913868]]
+        path.features[0].properties.timestamps = [e.timestamp]
+        path.features[0].properties.accuraccies = [e.accuracy]
+        console.log(path)
+        pathIndex++
+    // else if this location is > <lastlocationaccuracy> m from <lastlocation>
+    } else if ( map.distance(e.latlng, coordsToLatLng(path.features[0].geometry.coordinates[pathIndex - 1])) > path.features[0].properties.accuraccies[pathIndex - 1] ) {
 
-    // // If first point or outside previous point accuracy, add new point to coordinates and update map
-    // if ( length === 0 ) {
-    //     // Add this [lon, lat] pair
-    //     path.features[0].geometry.coordinates.push([e.longitude, e.latitude])
-    //     path.features[0].properties.accuraccies.push(e.accuracy)
-
-    // } else if ( thisPoint.distanceTo(lastPoint) > lastAccur ) {
-    //     path.features[0].geometry.coordinates.push([e.longitude, e.latitude])
-    //     path.features[0].properties.accuraccies.push(e.accuracy)
-    //     !line ? line = L.polyline( path.features[0].geometry.coordinates ) :
-    //     line.redraw()
-    // }
+        path.features[0].geometry.coordinates.push([e.longitude, e.latitude])
+        path.features[0].properties.timestamps.push(e.timestamp)
+        path.features[0].properties.accuraccies.push(e.accuracy)
+        console.log(path)
+        // If second point
+        if (pathIndex === 1) {
+            let line = L.polyline(coordsToLatLngs(path.features[0].geometry.coordinates), lineOptions).addTo(map)
+        } else {
+            line.redraw()
+        }
+        pathIndex++
+    }
 
 });
 
