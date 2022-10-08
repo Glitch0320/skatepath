@@ -44,10 +44,13 @@ const lineOptions = {
 }
 
 const gOptions = {
-    // https://leafletjs.com/reference.html#geojson
+    style: function (feature) {
+        return {
+            color: '#234099',
+            weight: 3.25
+        }
+    }
 }
-
-const geoLayer = L.geoJSON().addTo(map)
 
 // Sets map to current location, with tracking enabled
 map.locate({
@@ -67,6 +70,7 @@ map.on('locationfound', (e) => {
     // If first location 
     if (pathIndex === 0) {
         // Add [lon, lat], timestamp, and accuracy to corresponding arrays in path{geoJSON} object
+        // Added Oslo Norway to check if map.distance returns true
         path.features[0].geometry.coordinates = [[10.752245, 59.913868]]
         path.features[0].properties.timestamps = [e.timestamp]
         path.features[0].properties.accuraccies = [e.accuracy]
@@ -75,16 +79,20 @@ map.on('locationfound', (e) => {
     // else if this location is > <lastlocationaccuracy> m from <lastlocation>
     } else if ( map.distance(e.latlng, coordsToLatLng(path.features[0].geometry.coordinates[pathIndex - 1])) > path.features[0].properties.accuraccies[pathIndex - 1] ) {
 
+        // Add [lng, lat], timestamp, and accuracy to path
         path.features[0].geometry.coordinates.push([e.longitude, e.latitude])
         path.features[0].properties.timestamps.push(e.timestamp)
         path.features[0].properties.accuraccies.push(e.accuracy)
         console.log(path)
-        // If second point
+        
         if (pathIndex === 1) {
-            let line = L.polyline(coordsToLatLngs(path.features[0].geometry.coordinates), lineOptions).addTo(map)
+            // Add geoJson to map
+            L.geoJSON(path, gOptions).addTo(map)
         } else {
-            line.redraw()
+            document.querySelector('.leaflet-overlay-pane').textContent = '';
+            L.geoJSON(path, gOptions).addTo(map)
         }
+        
         pathIndex++
     }
 
