@@ -71,7 +71,7 @@ map.on('locationfound', (e) => {
     if (pathIndex === 0) {
         // Add [lon, lat], timestamp, and accuracy to corresponding arrays in path{geoJSON} object
         // Added Oslo Norway to check if map.distance returns true
-        path.features[0].geometry.coordinates = [[10.752245, 59.913868]]
+        path.features[0].geometry.coordinates = [[e.longitude, e.latitude]]
         path.features[0].properties.timestamps = [e.timestamp]
         path.features[0].properties.accuraccies = [e.accuracy]
         console.log(path)
