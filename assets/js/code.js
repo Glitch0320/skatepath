@@ -1,52 +1,53 @@
-// Initialize map
-var map = L.map('map').setView([0, 0], 10);
-
-const path = []
-
-const pathOptions = {color: '#234099',
-                     weight: 5}
-
-//  Thanks for this function: https://www.geeksforgeeks.org/program-distance-two-points-earth/#:~:text=For%20this%20divide%20the%20values,is%20the%20radius%20of%20Earth.
-// JavaScript program to calculate Distance Between
-// Two Points on Earth
- 
-function distance(pairone, pairtwo)
-{
-    lon1 = pairone.lng
-    lon2 = pairtwo.lng
-    lat1 = pairone.lat
-    lat2 = pairone.lat
-
-    // The math module contains a function
-    // named toRadians which converts from
-    // degrees to radians.
-    lon1 =  lon1 * Math.PI / 180;
-    lon2 = lon2 * Math.PI / 180;
-    lat1 = lat1 * Math.PI / 180;
-    lat2 = lat2 * Math.PI / 180;
-
-    // Haversine formula
-    let dlon = lon2 - lon1;
-    let dlat = lat2 - lat1;
-    let a = Math.pow(Math.sin(dlat / 2), 2)
-        + Math.cos(lat1) * Math.cos(lat2)
-        * Math.pow(Math.sin(dlon / 2),2);
-    
-    let c = 2 * Math.asin(Math.sqrt(a));
-
-    // Radius of earth in kilometers. Use 3956
-    // for miles
-    let r = 6371;
-
-    // Divide by 1000 to get meters
-    return((c * r)/1000);
+// For some reason this function isn't being recognized so I will rewrite it here
+function coordsToLatLng([lon, lat]) {
+    // return latlng object
+    return L.latLng(lat, lon)
 }
 
-// Add OpenStreetMap
-var layer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
+// Initialize map
+const mapOptions = {
+    // https://leafletjs.com/reference.html#map-option
+}
+
+let map = L.map('map').setView([0, 0], 10, mapOptions);
+
+// Tile Layer is a grid of images 256 by 256px
+let layer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map)
+
+const pathOptions = {
+    // https://leafletjs.com/reference.html#path
+}
+
+// geoJSON object with one LineString
+const path = {
+    "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        accuraccies: [],
+        timestamps: []
+      },
+      "geometry": {
+        "type": "LineString",
+        coordinates: []
+      }
+    }
+  ]
+};
+
+const lineOptions = {
+    // https://leafletjs.com/reference.html#polyline
+}
+
+const gOptions = {
+    // https://leafletjs.com/reference.html#geojson
+}
+
+const geoLayer = L.geoJSON().addTo(map)
 
 // Sets map to current location, with tracking enabled
 map.locate({
@@ -56,22 +57,43 @@ map.locate({
     enableHighAccuracy: true
 })
 
-// Locationfound while be fired multiple times while moving because .locate is called with the watch option set to true
+// In this context, a point is a group of values to be added to the path object
+let pathIndex = 0
 
-// !locationfound: user can move and scale map
-// As soon as locationfound: the map is reset to current position due to setView and watch being true
 map.on('locationfound', (e) => {
-    // If currentpoint is at least a certain distance from lastPoint, add to path
 
-            path.push(e.latlng)
-            // Clear polygon layer
-            $('.leaflet-overlay-pane').children().eq(0).children().eq(0).empty()
-            // Redraw line
-            L.polyline(path, pathOptions).addTo(map)
-            console.log('point added')
-    // At this point, I'm not sure how many points one object could keep track of without causing performance issues, since I've seen geoJSON objects representing lines as complex as state borders, I will assume for now that one skate will not be too much data
-    // That being said, I could only add points if they fall outside of a certain distance from the initial point, so that they are added in a more incremental manner.
-    // A feature I would like to allow for the user is the ability to edit their path on completion of a skate, because the tracking may not always be accurate. This is definitely possible with geoJSON.
+    // If current latlng is first, add [lon, lat], timestamp, and accuracy to LineString
+        // Add marker to current user location
+    // Else If first latlng exists, and this latlng is at least previousAccuracy meters from previousLatLng
+        // add [lon, lat], timestamp, and accuracy to LineString
+        // update polyline drawn with LineString
+
+    // console.log(e)
+    // thisPoint = e.latLng
+    // now = e.timestamp
+    // length = path.features[0].geometry.coordinates.length
+    // // If there is at least one element in path...coordinates
+    // if (length > 0) {
+    //     lastPoint = coordsToLatLng(path.features[0].geometry.coordinates[length - 1])
+    //     lastAccur = path.features[0].properties.accuraccies[length - 1]
+    //     console.log(`${lastPoint}
+    //     ${lastAccur}
+    //     ${now}
+    //     ____`)
+    // }
+
+    // // If first point or outside previous point accuracy, add new point to coordinates and update map
+    // if ( length === 0 ) {
+    //     // Add this [lon, lat] pair
+    //     path.features[0].geometry.coordinates.push([e.longitude, e.latitude])
+    //     path.features[0].properties.accuraccies.push(e.accuracy)
+
+    // } else if ( thisPoint.distanceTo(lastPoint) > lastAccur ) {
+    //     path.features[0].geometry.coordinates.push([e.longitude, e.latitude])
+    //     path.features[0].properties.accuraccies.push(e.accuracy)
+    //     !line ? line = L.polyline( path.features[0].geometry.coordinates ) :
+    //     line.redraw()
+    // }
 
 });
 

@@ -1,0 +1,23 @@
+{
+  "name": "skatepath",
+  "version": "1.0.0",
+  "description": "<h2>The main goal of this project is to create an app that can track the user's location and draw a line on a map, while displaying realtime speed data via leaflet maps or the\r PocketLab Voyager sensor.</h2>\r <img src=\"./assets/skate-path.png\" alt=\"screenshot of a map with a line making a path\" style=\"height:auto;width:100%\">\r <h3>Other Features</h3>\r <ul>\r     <li>Add locations (skate spots) to a public list</li>\r     <li>Spedometer</li>\r     <li>Stat Tracker</li>\r     <li>Jump Calculator</li>\r     <li>While gps may be able to consistently track a user's speed, data connection is not consistent. It may be very useful to\r         incorporate <a href='https://www.thepocketlab.com/store/pocketlab-voyager?hsCtaTracking=f6b2ce89-1756-4590-a17e-a5002c3fa740%7C780d6f6e-1667-4d93-be25-98dcb00daf32'>PocketLab Voyager</a> so that a user can purchase a sensor to attach to their mode of transport. Data taken from these\r         sensors could bring about the creation of other features, as well as test and improve existing features for users who don't\r         want to purchase one of these sensors.\r     </li>\r </ul>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Glitch0320/skatespot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Glitch0320/skatespot/issues"
+  },
+  "homepage": "https://github.com/Glitch0320/skatespot#readme",
+  "dependencies": {
+    "leaflet": "^1.9.2"
+  }
+}
