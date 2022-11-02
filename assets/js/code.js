@@ -47,15 +47,17 @@ const gOptions = {
     style: function (feature) {
         return {
             color: '#234099',
-            weight: 3.25
+            weight: 7.5
         }
     }
 }
 
+// Add geoJson to map
+var geoLayer = L.geoJSON().addTo(map)
+
 // Sets map to current location, with tracking enabled
 map.locate({
     watch: true,
-    setView: true,
     maxZoom: 18,
     enableHighAccuracy: true
 })
@@ -65,10 +67,11 @@ let pathIndex = 0
 
 map.on('locationfound', (e) => {
 
-    console.log('found')
+    console.log(`lat: ${e.latitude} lon: ${e.longitude}`)
 
     // If first location 
     if (pathIndex === 0) {
+        map.setView([e.latitude, e.longitude], 17)
         // Add [lon, lat], timestamp, and accuracy to corresponding arrays in path{geoJSON} object
         // Added Oslo Norway to check if map.distance returns true
         path.features[0].geometry.coordinates = [[e.longitude, e.latitude]]
@@ -85,10 +88,8 @@ map.on('locationfound', (e) => {
         path.features[0].properties.accuraccies.push(e.accuracy)
         console.log(path)
         
-        if (pathIndex === 1) {
-            // Add geoJson to map
-            L.geoJSON(path, gOptions).addTo(map)
-        } else {
+        if (pathIndex > 1) {
+            // redraw json
             document.querySelector('.leaflet-overlay-pane').textContent = '';
             L.geoJSON(path, gOptions).addTo(map)
         }
