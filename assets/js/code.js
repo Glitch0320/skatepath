@@ -29,7 +29,7 @@ const path = {
         "timestamps": []
       },
   "features": []
-};
+}
 
 const lineOptions = {
     // https://leafletjs.com/reference.html#polyline
@@ -49,8 +49,7 @@ var geoLayer = L.geoJSON(path, gOptions).addTo(map)
 // Sets map to current location, with tracking enabled
 map.locate({
     watch: true,
-    setView: true,
-    maxZoom: 18,
+    maxZoom: 19,
     enableHighAccuracy: true
 })
 
@@ -68,11 +67,32 @@ map.on('locationfound', (e) => {
         }
     }
 
-    console.log(e)
+    if (pathIndex === 0) {
+        map.setView(e.latlng, 19)
+        console.log(e)
+    }
 
-    // If new location is past a certain distance from previous one
+    // If new location is past a certain distance from previous one, add location, accuracy, and timestamp to path geoJson: {
+//     "type": "FeatureCollection",
+//     "properties": {
+//         "accuraccies": [],
+//         "timestamps": []
+//       },
+//   "features": []
+// }
     
         // if feature.coordinates.length < 2, add [e.lon, e.lat]
+
+        let location = L.marker(e.latlng, {
+            // style options
+        }).addTo(map)
+
+        let accuracy = L.circle(e.latlng, {
+            color: "#2cff0f",
+            fillColor:"indigo",
+            fillOpacity: .75,
+            radius: e.accuracy
+        }).addTo(map)
 
         // Else, add feature to path.features and empty feature.coordinates, redraw
 
