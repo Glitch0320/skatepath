@@ -1,9 +1,3 @@
-// For some reason this function isn't being recognized so I will rewrite it here
-function coordsToLatLng([lon, lat]) {
-    // return latlng object
-    return L.latLng(lat, lon)
-}
-
 // Initialize map
 const mapOptions = {
     // https://leafletjs.com/reference.html#map-option
@@ -23,13 +17,15 @@ const pathOptions = {
 
 // geoJSON object with one LineString
 const path = {
-    "type": "FeatureCollection",
-    "properties": {
-        "accuraccies": [],
-        "timestamps": []
-      },
-  "features": []
-}
+    "type": "Feature",
+    "geometry": {
+      "coordinates": [],
+      "type": "LineString"
+    }
+  }
+
+const accuracies = []
+const timestamps = []
 
 const lineOptions = {
     // https://leafletjs.com/reference.html#polyline
@@ -44,7 +40,7 @@ const gOptions = {
 }
 
 // Add geoJson to map
-var geoLayer = L.geoJSON(path, gOptions).addTo(map)
+var geoLayer = L.geoJSON().addTo(map)
 
 // Sets map to current location, with tracking enabled
 map.locate({
@@ -53,48 +49,31 @@ map.locate({
     enableHighAccuracy: true
 })
 
-// path index is a direct count of every point added, while featureIndex is every two points(LineString)
-let pathIndex = 0
-let featureIndex = 0
+pathIndex = 0
 
 map.on('locationfound', (e) => {
-
-    const feature = {
-        type: "Feature",
-        geometry: {
-          type: "LineString",
-          coordinates: []
-        }
-    }
 
     if (pathIndex === 0) {
         map.setView(e.latlng, 19)
         console.log(e)
+        // Add current location, timestamp, and accuracy to path
+        // path.geometry.coordinates.push([e.longitude, e.latitude])
+        // accuracies.push(e.accuracy)
+        // timestamps.push(e.timestamp) 
+
+        L.marker(e.latlng).addTo(map)
+        // console.log(path)
+        pathIndex++
+
+    } else {
+
+        L.marker(e.latlng).addTo(map)
+        // console.log(path)
+        pathIndex++
+
+        // If next location is at least 32 m (my lucky number and a good distance, although this distance should be determined relative to speed)
+
     }
-
-    // If new location is past a certain distance from previous one, add location, accuracy, and timestamp to path geoJson: {
-//     "type": "FeatureCollection",
-//     "properties": {
-//         "accuraccies": [],
-//         "timestamps": []
-//       },
-//   "features": []
-// }
-    
-        // if feature.coordinates.length < 2, add [e.lon, e.lat]
-
-        let location = L.marker(e.latlng, {
-            // style options
-        }).addTo(map)
-
-        let accuracy = L.circle(e.latlng, {
-            color: "#2cff0f",
-            fillColor:"indigo",
-            fillOpacity: .75,
-            radius: e.accuracy
-        }).addTo(map)
-
-        // Else, add feature to path.features and empty feature.coordinates, redraw
 
 });
 
