@@ -15,6 +15,49 @@ const pathOptions = {
     // https://leafletjs.com/reference.html#path
 }
 
+const testEvents = [
+    {
+        latlng: {
+            lat: 43.6613873,
+            lon: -94.4608589
+        },
+        latitude: 43.6613873,
+        longitude: -94.4608589
+    },
+    {
+        latlng: {
+            lat: 43.6617699,
+            lon: -94.4624869
+        },
+        latitude: 43.6617699,
+        longitude: -94.4624869
+    },
+    {
+        latlng: {
+            lat: 43.6635148,
+            lon: -94.4626107
+        },
+        latitude: 43.6635148,
+        longitude: -94.4626107
+    },
+    {
+        latlng: {
+            lat: 43.6641523,
+            lon: -94.4599669
+        },
+        latitude: 43.6641523,
+        longitude: -94.4599669
+    },
+    {
+        latlng: {
+            lat: 43.6628773,
+            lon: -94.4580785
+        },
+        latitude: 43.6628773,
+        longitude: -94.4580785
+    },
+]
+
 // geoJSON object with one LineString
 const path = {
     "type": "Feature",
@@ -55,6 +98,7 @@ const path = {
 
 const accuracies = []
 const timestamps = []
+let distance = 0
 
 const gOptions = {
     style: {
@@ -64,8 +108,7 @@ const gOptions = {
     }
 }
 
-// Add geoJson to map
-var geoLayer = L.geoJSON().addTo(map)
+let geoLayer = L.geoJson().addTo(map)
 
 // Sets map to current location, with tracking enabled
 map.locate({
@@ -76,15 +119,15 @@ map.locate({
 
 pathIndex = 0
 
-map.on('locationfound', (e) => {
+const drawPath = (e) => {
     console.log('found')
+    console.log((e))
     if (pathIndex === 0) {
         map.setView(e.latlng, 19)
-        console.log(e)
         // Add current location, timestamp, and accuracy to path
         path.geometry.coordinates.push([e.longitude, e.latitude])
-        accuracies.push(e.accuracy)
-        timestamps.push(e.timestamp)
+        // accuracies.push(e.accuracy)
+        // timestamps.push(e.timestamp)
 
         let start = L.marker(e.latlng).addTo(map)
         // console.log(path)
@@ -93,27 +136,29 @@ map.on('locationfound', (e) => {
     } else {
 
         // If this location is at least 20 m from last location,
-        // if (e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] }) > 20) {
-        // add to geojson and redraw
+        if (e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] }) > 20) {
+        // add to distance and geojson and redraw
         path.geometry.coordinates.push([e.longitude, e.latitude])
-        accuracies.push(e.accuracy)
-        timestamps.push(e.timestamp)
+        // accuracies.push(e.accuracy)
+        // timestamps.push(e.timestamp)
 
-        if (geoLayer) {
-            // redraw geoJson
-            geoLayer.remove()
-            geoLayer.addData(path, gOptions).addTo(map)
-        } else {
-            geoLayer.addData(path, gOptions).addTo(map)
-        }
+        distance += e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] })
+        $('#distance').text(Math.round(distance))
+
+        geoLayer.remove()
+        geoLayer = L.geoJson(path, gOptions).addTo(map)
+        
 
     }
 
     pathIndex++
 
-    // }
+    }
 
-})
+}
+
+map.on('locationfound', (e) => drawPath(e))
+// testEvents.forEach(e => drawPath(e))
 
 map.on('locationerror', (e) => {
 
