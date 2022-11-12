@@ -129,7 +129,7 @@ const drawPath = (e) => {
         // accuracies.push(e.accuracy)
         // timestamps.push(e.timestamp)
 
-        let start = L.marker(e.latlng).addTo(map)
+        L.marker(e.latlng).addTo(map)
         // console.log(path)
         pathIndex++
 
@@ -137,7 +137,19 @@ const drawPath = (e) => {
 
         // If this location is at least rougly 20 ft from last location,
         if (e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] }) > 6) {
-        // add to distance and geojson and redraw
+        // Move marker to new locaion, add to distance and geojson and redraw
+        $('.leaflet-marker-pane').text('')
+        $('.leaflet-shadow-pane').text('')
+        L.marker(e.latlng).addTo(map)
+
+        // accuracy.remove()
+        // accuracy = L.circle(e.latlng, {
+        //     color: '#234099',
+        //     fillColor: '#4b0082',
+        //     fillOpacity: 0.32,
+        //     radius: e.accuracy
+        // }).addTo(map)
+
         path.geometry.coordinates.push([e.longitude, e.latitude])
         // accuracies.push(e.accuracy)
         // timestamps.push(e.timestamp)
