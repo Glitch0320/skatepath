@@ -146,7 +146,7 @@ const drawPath = (e) => {
     } else {
 
         // If this location is at least rougly 20 ft from last location, and
-        if (e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] }) > 6) {
+        if (e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] }) > 10) {
         // Move marker to new locaion, add to distance and geojson and redraw
         $('.leaflet-marker-pane').text('')
         $('.leaflet-shadow-pane').text('')
@@ -166,7 +166,17 @@ const drawPath = (e) => {
         L.geoJson(path, gOptions).addTo(map)
 
         distance += e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] })
-        $('#distance').text(Math.round(distance))
+
+        distance = 
+        $('#distance').val() === 'm' ? 
+        Math.round(distance) :
+        $('#distance').val() === 'y' ?
+        Math.round(distance * 1.09361) :
+        $('#distance').val() === 'k' ?
+        Math.round(distance / 1000) : 
+        Math.round(distance / 1609)
+
+        console.log(distance)
         
         pathIndex++
 
