@@ -168,15 +168,15 @@ const drawPath = (e) => {
         distance += e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] })
 
         distance = 
-        $('#distance').val() === 'm' ? 
+        $('#unit').val() === 'm' ? 
         Math.round(distance) :
-        $('#distance').val() === 'y' ?
+        $('#unit').val() === 'y' ?
         Math.round(distance * 1.09361) :
-        $('#distance').val() === 'k' ?
-        Math.round(distance / 1000) : 
-        Math.round(distance / 1609)
+        $('#unit').val() === 'k' ?
+        (distance / 1000).toFixed(2) : 
+        (distance / 1609).toFixed(2)
 
-        console.log(distance)
+        $('#distance').text(distance)
         
         pathIndex++
 
