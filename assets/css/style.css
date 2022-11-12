@@ -19,3 +19,8 @@ html, body, #map {
     right: 0;
     background-color: rgb(71, 61, 138, 0.5);
 }
+
+span, select {
+    padding: .5rem;
+    margin: .5rem;
+}
