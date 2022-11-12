@@ -135,8 +135,8 @@ const drawPath = (e) => {
 
     } else {
 
-        // If this location is at least 20 m from last location,
-        if (e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] }) > 20) {
+        // If this location is at least rougly 20 ft from last location,
+        if (e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] }) > 6) {
         // add to distance and geojson and redraw
         path.geometry.coordinates.push([e.longitude, e.latitude])
         // accuracies.push(e.accuracy)
@@ -148,10 +148,9 @@ const drawPath = (e) => {
         geoLayer.remove()
         geoLayer = L.geoJson(path, gOptions).addTo(map)
         
+        pathIndex++
 
     }
-
-    pathIndex++
 
     }
 
