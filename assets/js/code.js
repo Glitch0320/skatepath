@@ -114,11 +114,11 @@ const gOptions = {
 }
 
 // Sets map to current location, with tracking enabled
-// map.locate({
-//     watch: true,
-//     maxZoom: 20,
-//     enableHighAccuracy: true
-// })
+map.locate({
+    watch: true,
+    maxZoom: 20,
+    enableHighAccuracy: true
+})
 
 pathIndex = 0
 
