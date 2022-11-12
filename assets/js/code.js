@@ -1,9 +1,3 @@
-// For some reason this function isn't being recognized so I will rewrite it here
-function coordsToLatLng([lon, lat]) {
-    // return latlng object
-    return L.latLng(lat, lon)
-}
-
 // Initialize map
 const mapOptions = {
     // https://leafletjs.com/reference.html#map-option
@@ -23,83 +17,106 @@ const pathOptions = {
 
 // geoJSON object with one LineString
 const path = {
-    "type": "FeatureCollection",
-    "properties": {
-        "accuraccies": [],
-        "timestamps": []
-      },
-  "features": []
+    "type": "Feature",
+    "geometry": {
+        "coordinates": [
+            // [
+            //     -94.4620212317282,
+            //     43.661520238377875
+            //   ],
+            //   [
+            //     -94.46350790397351,
+            //     43.65970296741901
+            //   ],
+            //   [
+            //     -94.46392061864728,
+            //     43.65826046207823
+            //   ],
+            //   [
+            //     -94.46220654035204,
+            //     43.6575526562963
+            //   ],
+            //   [
+            //     -94.45835043979338,
+            //     43.6591292368029
+            //   ],
+            //   [
+            //     -94.45963001089919,
+            //     43.66128996978054
+            //   ],
+            //   [
+            //     -94.46148546272119,
+            //     43.6617034094557
+            //   ]
+        ],
+        "type": "LineString"
+    }
 }
 
-const lineOptions = {
-    // https://leafletjs.com/reference.html#polyline
-}
+const accuracies = []
+const timestamps = []
 
 const gOptions = {
     style: {
-    "color": '#234099',
-    "weight": 7.5,
-    "opacity": 0.85
+        "color": '#234099',
+        "weight": 5,
+        "opacity": 0.85
     }
 }
 
 // Add geoJson to map
-var geoLayer = L.geoJSON(path, gOptions).addTo(map)
+var geoLayer = L.geoJSON().addTo(map)
 
 // Sets map to current location, with tracking enabled
 map.locate({
     watch: true,
-    maxZoom: 19,
+    maxZoom: 20,
     enableHighAccuracy: true
 })
 
-// path index is a direct count of every point added, while featureIndex is every two points(LineString)
-let pathIndex = 0
-let featureIndex = 0
+pathIndex = 0
 
 map.on('locationfound', (e) => {
-
-    const feature = {
-        type: "Feature",
-        geometry: {
-          type: "LineString",
-          coordinates: []
-        }
-    }
-
+    console.log('found')
     if (pathIndex === 0) {
         map.setView(e.latlng, 19)
         console.log(e)
+        // Add current location, timestamp, and accuracy to path
+        path.geometry.coordinates.push([e.longitude, e.latitude])
+        accuracies.push(e.accuracy)
+        timestamps.push(e.timestamp)
+
+        let start = L.marker(e.latlng).addTo(map)
+        // console.log(path)
+        pathIndex++
+
+    } else {
+
+        // If this location is at least 20 m from last location,
+        // if (e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] }) > 20) {
+        // add to geojson and redraw
+        path.geometry.coordinates.push([e.longitude, e.latitude])
+        accuracies.push(e.accuracy)
+        timestamps.push(e.timestamp)
+
+        if (geoLayer) {
+            // redraw geoJson
+            geoLayer.remove()
+            geoLayer.addData(path, gOptions).addTo(map)
+        } else {
+            geoLayer.addData(path, gOptions).addTo(map)
+        }
+
     }
 
-    // If new location is past a certain distance from previous one, add location, accuracy, and timestamp to path geoJson: {
-//     "type": "FeatureCollection",
-//     "properties": {
-//         "accuraccies": [],
-//         "timestamps": []
-//       },
-//   "features": []
-// }
-    
-        // if feature.coordinates.length < 2, add [e.lon, e.lat]
+    pathIndex++
 
-        let location = L.marker(e.latlng, {
-            // style options
-        }).addTo(map)
+    // }
 
-        let accuracy = L.circle(e.latlng, {
-            color: "#2cff0f",
-            fillColor:"indigo",
-            fillOpacity: .75,
-            radius: e.accuracy
-        }).addTo(map)
-
-        // Else, add feature to path.features and empty feature.coordinates, redraw
-
-});
+})
 
 map.on('locationerror', (e) => {
 
     alert(e.message)
 
-});
+})
