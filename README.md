@@ -20,6 +20,8 @@ If your README is long, add a table of contents to make it easy for users to fin
 
 ## Goals
 
+-- As of right now, the user is promptly asked for their location on page load, which is not a great user experience. When implementing this idea with a react app, I intend to make sure each user is registered any information regarding their location is stored safely in a mongoose database.
+
 I would like to expand the overlay interface to allow the user to select units of measure, as well as a setting to choose what size the path increments should be (Anywhere from 6 to 30 meters, or roughly 20 to 100 feet)
 
 ## Installation

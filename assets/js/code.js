@@ -22,7 +22,8 @@ const testEvents = [
             lon: -94.4608589
         },
         latitude: 43.6613873,
-        longitude: -94.4608589
+        longitude: -94.4608589,
+        accuracy: 15
     },
     {
         latlng: {
@@ -30,7 +31,8 @@ const testEvents = [
             lon: -94.4624869
         },
         latitude: 43.6617699,
-        longitude: -94.4624869
+        longitude: -94.4624869,
+        accuracy: 15
     },
     {
         latlng: {
@@ -38,7 +40,8 @@ const testEvents = [
             lon: -94.4626107
         },
         latitude: 43.6635148,
-        longitude: -94.4626107
+        longitude: -94.4626107,
+        accuracy: 15
     },
     {
         latlng: {
@@ -46,7 +49,8 @@ const testEvents = [
             lon: -94.4599669
         },
         latitude: 43.6641523,
-        longitude: -94.4599669
+        longitude: -94.4599669,
+        accuracy: 15
     },
     {
         latlng: {
@@ -54,7 +58,8 @@ const testEvents = [
             lon: -94.4580785
         },
         latitude: 43.6628773,
-        longitude: -94.4580785
+        longitude: -94.4580785,
+        accuracy: 15
     },
 ]
 
@@ -108,14 +113,12 @@ const gOptions = {
     }
 }
 
-let geoLayer = L.geoJson().addTo(map)
-
 // Sets map to current location, with tracking enabled
-map.locate({
-    watch: true,
-    maxZoom: 20,
-    enableHighAccuracy: true
-})
+// map.locate({
+//     watch: true,
+//     maxZoom: 20,
+//     enableHighAccuracy: true
+// })
 
 pathIndex = 0
 
@@ -147,7 +150,9 @@ const drawPath = (e) => {
         // Move marker to new locaion, add to distance and geojson and redraw
         $('.leaflet-marker-pane').text('')
         $('.leaflet-shadow-pane').text('')
+        $('.leaflet-overlay-pane').children().eq(0).children().eq(0).text('')
         L.marker(e.latlng).addTo(map)
+
         L.circle(e.latlng, {
             radius: e.accuracy,
             color: '#234099',
@@ -158,12 +163,10 @@ const drawPath = (e) => {
         path.geometry.coordinates.push([e.longitude, e.latitude])
         // accuracies.push(e.accuracy)
         // timestamps.push(e.timestamp)
+        L.geoJson(path, gOptions).addTo(map)
 
         distance += e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] })
         $('#distance').text(Math.round(distance))
-
-        geoLayer.remove()
-        geoLayer = L.geoJson(path, gOptions).addTo(map)
         
         pathIndex++
 
@@ -173,11 +176,15 @@ const drawPath = (e) => {
 
 }
 
-map.on('locationfound', (e) => drawPath(e))
-// testEvents.forEach(e => drawPath(e))
+// map.on('locationfound', (e) => drawPath(e))
+testEvents.forEach(e => drawPath(e))
 
 map.on('locationerror', (e) => {
 
     alert(e.message)
 
 })
+
+// On app run:
+// If user is not logged in, prompt them to sign up or login.
+// When user logs in, present a profile page that
