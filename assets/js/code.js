@@ -176,8 +176,8 @@ const drawPath = (e) => {
 
 }
 
-// map.on('locationfound', (e) => drawPath(e))
-testEvents.forEach(e => drawPath(e))
+map.on('locationfound', (e) => drawPath(e))
+// testEvents.forEach(e => drawPath(e))
 
 map.on('locationerror', (e) => {
 
