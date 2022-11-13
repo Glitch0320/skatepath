@@ -11,10 +11,6 @@ let layer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     "attribution": '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map)
 
-const pathOptions = {
-    // https://leafletjs.com/reference.html#path
-}
-
 const testEvents = [
     {
         latlng: {
@@ -101,7 +97,6 @@ const path = {
     }
 }
 
-const accuracies = []
 const timestamps = []
 let distance = 0
 
@@ -121,11 +116,13 @@ map.locate({
 })
 
 pathIndex = 0
+let here
 
 const drawPath = (e) => {
     console.log('found')
     if (pathIndex === 0) {
         console.log(e)
+        here = e.latlng
         map.setView(e.latlng, 19)
         // Add current location, timestamp, and accuracy to path
         path.geometry.coordinates.push([e.longitude, e.latitude])
@@ -133,7 +130,7 @@ const drawPath = (e) => {
         // timestamps.push(e.timestamp)
 
         L.marker(e.latlng).addTo(map)
-    
+
         L.circle(e.latlng, {
             radius: e.accuracy,
             color: '#234099',
@@ -147,40 +144,41 @@ const drawPath = (e) => {
 
         // If this location is at least rougly 20 ft from last location, and
         if (e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] }) > 10) {
-        // Move marker to new locaion, add to distance and geojson and redraw
-        $('.leaflet-marker-pane').text('')
-        $('.leaflet-shadow-pane').text('')
-        $('.leaflet-overlay-pane').children().eq(0).children().eq(0).text('')
-        L.marker(e.latlng).addTo(map)
+            // Move marker to new locaion, add to distance and geojson and redraw
+            $('.leaflet-marker-pane').text('')
+            $('.leaflet-shadow-pane').text('')
+            $('.leaflet-overlay-pane').children().eq(0).children().eq(0).text('')
+            L.marker(e.latlng).addTo(map)
+            here = e.latlng
 
-        L.circle(e.latlng, {
-            radius: e.accuracy,
-            color: '#234099',
-            fillColor: '#f78d46',
-            fillOpacity: .32
-        }).addTo(map)
+            L.circle(e.latlng, {
+                radius: e.accuracy,
+                color: '#234099',
+                fillColor: '#f78d46',
+                fillOpacity: .32
+            }).addTo(map)
 
-        path.geometry.coordinates.push([e.longitude, e.latitude])
-        // accuracies.push(e.accuracy)
-        // timestamps.push(e.timestamp)
-        L.geoJson(path, gOptions).addTo(map)
+            path.geometry.coordinates.push([e.longitude, e.latitude])
+            // accuracies.push(e.accuracy)
+            // timestamps.push(e.timestamp)
+            L.geoJson(path, gOptions).addTo(map)
 
-        distance += e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] })
+            distance += e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] })
 
-        distance = 
-        $('#unit').val() === 'm' ? 
-        Math.round(distance) :
-        $('#unit').val() === 'y' ?
-        Math.round(distance * 1.09361) :
-        $('#unit').val() === 'k' ?
-        (distance / 1000).toFixed(2) : 
-        (distance / 1609).toFixed(2)
+            distance =
+                $('#unit').val() === 'm' ?
+                    Math.round(distance) :
+                    $('#unit').val() === 'y' ?
+                        Math.round(distance * 1.09361) :
+                        $('#unit').val() === 'k' ?
+                            (distance / 1000).toFixed(2) :
+                            (distance / 1609).toFixed(2)
 
-        $('#distance').text(distance)
-        
-        pathIndex++
+            $('#distance').text(distance)
 
-    }
+            pathIndex++
+
+        }
 
     }
 
@@ -193,6 +191,10 @@ map.on('locationerror', (e) => {
 
     alert(e.message)
 
+})
+
+$('#tools').on('click', e => {
+    map.setView(here, 19)
 })
 
 // On app run:
