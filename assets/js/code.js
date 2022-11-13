@@ -143,7 +143,7 @@ const drawPath = (e) => {
     } else {
 
         // If this location is at least 10 m from last location
-        if (e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] }) > 6) {
+        if (e.latlng.distanceTo({ lon: path.geometry.coordinates[pathIndex - 1][0], lat: path.geometry.coordinates[pathIndex - 1][1] }) > 10) {
             // Move marker to new locaion, add to distance and geojson and redraw
             $('.leaflet-marker-pane').text('')
             $('.leaflet-shadow-pane').text('')
